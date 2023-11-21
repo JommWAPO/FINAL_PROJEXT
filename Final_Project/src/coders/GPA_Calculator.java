@@ -1,6 +1,7 @@
 package coders;
 
 import java.awt.*;
+import java.io.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -9,6 +10,7 @@ import java.util.*;
 public class GPA_Calculator {
 
     public static void main(String[] args) {
+  
     	sub_avr sub = new sub_avr();
     	
         JFrame frame = new JFrame();
@@ -80,25 +82,36 @@ public class GPA_Calculator {
         calculateButton.setBounds(240, 550, 100, 50); 
         calculateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int totalUnits = 0;
+            	 StringBuilder data = new StringBuilder();
+            	int totalUnits = 0;
                 double totalGradePoints = 0.0;
 
                 for (int i = 0; i < 10; i++) {
-                    String gradeText = gradeFields[i].getText();
+                	 String subject = subjectFields[i].getText();
+                	String gradeText = gradeFields[i].getText();
                     String unitText = unitFields[i].getText();
                     if (!gradeText.isEmpty() && !unitText.isEmpty()) {
                         double grade = Double.parseDouble(gradeText);
                         double units = Integer.parseInt(unitText);
                         totalGradePoints += grade * units;
                         totalUnits += units;
+                        data.append(subject).append(" : ").append(grade).append(" : ").append(units).append(" : ").append(averageField.getText()).append("\n");
                     }
                 }
 
                 if (totalUnits > 0) {
                     double average = totalGradePoints / totalUnits;
                     averageField.setText(String.format("%.2f", average)); //set avrg to text field
+                    data.append("Average: ").append(String.format("%.2f", average)).append("\n");
                 } else {
                     averageField.setText("N/A");
+                }
+                try {
+                    FileWriter writer = new FileWriter("C:\\Users\\Me\\eclipse-workspace\\Final_Project\\src\\coders\\GPA-GRADE.txt");
+                    writer.write(data.toString()); // Write subjects, grades, units, and average to the file
+                    writer.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
             }
         });

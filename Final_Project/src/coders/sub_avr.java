@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -71,10 +73,12 @@ public class sub_avr extends JFrame {
         calculateButton.setBounds(240, 550, 100, 50);
         calculateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	StringBuilder data = new StringBuilder();
                 int totalweight = 0;
                 double totalGradePoints = 0.0;
 
                 for (int i = 0; i < 10; i++) {
+                	String subject = subjectFields[i].getText();
                     String gradeText = gradeFields[i].getText();
                     String unitText = unitFields[i].getText();
                     if (!gradeText.isEmpty() && !unitText.isEmpty()) {
@@ -82,14 +86,23 @@ public class sub_avr extends JFrame {
                         double weight = Integer.parseInt(unitText);
                         totalGradePoints += grade * weight;
                         totalweight += weight;
+                        data.append(subject).append(" : ").append(grade).append(" : ").append(weight).append(" : ").append(averageField.getText()).append("\n");
                     }
                 }
 
                 if (totalweight > 0) {
                     double average = totalGradePoints / totalweight;
                     averageField.setText(String.format("%.2f", average));
+                    data.append("Average: ").append(String.format("%.2f", average)).append("\n");
                 } else {
                     averageField.setText("N/A");
+                }
+                try {
+                    FileWriter writer = new FileWriter("C:\\Users\\Me\\eclipse-workspace\\Final_Project\\src\\coders\\GPA-GRADE.txt");
+                    writer.write(data.toString()); // Write subjects, grades, units, and average to the file
+                    writer.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
